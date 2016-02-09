@@ -1,0 +1,26 @@
+{
+  "name": "photogrid",
+  "version": "1.0.0",
+  "description": "A udemy.com project.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matthew Duffy",
+  "license": "ISC",
+  "repository":
+  {
+    "type": "git",
+	"url": "https://github.com/mattduffy/udemy-photogrid.git"
+  },
+  "dependencies":
+  {
+    "express": "4.4.3",
+	"socket.io": "1.0.5",
+	"hogan-express": "0.5.2",
+	"knox": "0.9.2",
+	"formidable": "1.0.17",
+	"gm": "1.20.0",
+	"mongoose": "4.1.9"
+  }
+}
