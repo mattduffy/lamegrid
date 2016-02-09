@@ -3,10 +3,26 @@
 <head>
 	<meta charset="UTF-8">
 	<title>PhotoGrid</title>
-	<link rel="stylesheet" href="../public/css/main.css">
+	<link rel="stylesheet" href="/css/main.css">
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="../public/js/photogrid_utils.js"></script>
+	<script src="/js/photogrid_utils.js"></script>
+	<script>
+		$(function(){
+			var host = '{{host}}';
 
+			$(document).on('click', '#doUpload', function(){
+				uploadNow();
+			});
+
+			function uploadNow(){
+				var uploadUrl = host + '/upload';
+				var uploadFile = $('uploadPic');
+				if('' !== uploadFile.val()){
+					
+				}
+			}
+		});
+	</script>
 
 </head>
 <body>
@@ -27,11 +43,11 @@
 		<div class="gallery">
 			<ul>
 				<!-- Repeat the following <li> structure for every image -->
-				<!-- <li>
+				<li>
 					<div class="overlay">
 					<div class="voteCtrl">
 						<a href="#" class="voteUp">
-							<img src="../images/voteup.png" alt="Click Here to Vote Up !">
+							<img src="/images/voteup.png" alt="Click Here to Vote Up !">
 							<h4>100</h4>
 						</a>
 					</div>
@@ -39,7 +55,7 @@
 					<div class="imageHolder">
 						<img src="../images/someimage.jpg" alt="">
 					</div>
-				</li> -->
+				</li>
 				<!-- End Repeat -->
 
 

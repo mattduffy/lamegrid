@@ -1,0 +1,6 @@
+{
+  "host": "http://localhost:3000",
+  "accessKey": "AKIAJYVL3S7HLSGAKAFQ",
+  "secretKey": "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",
+  "s3Bucket": "fapgrid"
+}
