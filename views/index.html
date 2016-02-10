@@ -15,10 +15,28 @@
 			});
 
 			function uploadNow(){
+				$('.progress').fadeIn(100);
 				var uploadUrl = host + '/upload';
-				var uploadFile = $('uploadPic');
+				var uploadFile = $('.uploadPic');
 				if('' !== uploadFile.val()){
-					
+					var form = new FormData();
+					form.append('upload', uploadFile[0].files[0]);
+					// perform the Ajax POST request to send the file.
+					ajax({
+						method: 'POST',
+						url: uploadUrl,
+						success: function(){
+							$('.progress').fadeOut(200);
+							uploadFile.val('');
+						},
+						progress: function(e){
+							if(e.lengthComputable){
+								var perc = Math.round((e.loaded *100) / e.total);
+								$('.progress').css('width', (perc + "%"));
+							}
+						},
+						payload: form
+					});
 				}
 			}
 		});
