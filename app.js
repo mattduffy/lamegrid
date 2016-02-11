@@ -7,8 +7,8 @@ var express = require('express'),
   fs = require('fs'),
   os = require('os'),
   formidable = require('formidable'),
-  gm = require('gm')
-
+  gm = require('gm'),
+  mongoose = require('mongoose').connect(config.dburl)
 
 var app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -25,7 +25,7 @@ var knoxClient = knox.createClient({
   bucket: config.s3Bucket
 });
 
-require('./routes/routes.js')(express, app, formidable, fs, os, gm);
+require('./routes/routes.js')(express, app, formidable, fs, os, gm, knoxClient, mongoose);
 
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);

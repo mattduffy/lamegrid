@@ -1,4 +1,11 @@
-module.exports = function(express, app, formidable, fs, os, gm) {
+module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mongoose) {
+  var singleImage = mongoose.Schema({
+    filename:String,
+    votes:Number
+  });
+  var singleImageModel = mongoose.model('singleImage', singleImage);
+
+
   var router = express.Router();
 
   router.get('/', function(req, res, next){
@@ -31,10 +38,27 @@ module.exports = function(express, app, formidable, fs, os, gm) {
 
     newForm.on('end', function(){
       fs.rename(tmpFile, nfile, function(){
-        // Resize the image and upload to S3 bucket.
-        gm(nfile).resize(300).write(nfile);
-      };
-
+        // Resize the image.
+        gm(nfile).resize(300).write(nfile, function(){
+          fs.readFile(nfile, function(err, buf){
+            var req = knoxClient.put(fname, {
+              'Content-Length': buf.length,
+              'Content-Type': 'image/jpeg'
+            });
+            req.on('response', function(res){
+              if(200 == res.statusCode){
+                // Upload to S3 bucket successful.
+                var newImage = singleImageModel({
+                  filename: fname,
+                  votes: 0
+                }).save();
+                
+              }
+            });
+            req.end(buf);
+          });
+        });
+      });
     });
   });
   app.use('/', router);
