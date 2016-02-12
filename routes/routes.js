@@ -52,7 +52,7 @@ module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mong
                   filename: fname,
                   votes: 0
                 }).save();
-                
+                //console.log(res);
               }
             });
             req.end(buf);
