@@ -1,4 +1,9 @@
-module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mongoose) {
+module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mongoose, io) {
+  var Socket;
+  io.on('connection', function(socket){
+    Socket = socket;
+  });
+
   var singleImage = mongoose.Schema({
     filename:String,
     votes:Number
@@ -53,6 +58,13 @@ module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mong
                   votes: 0
                 }).save();
                 //console.log(res);
+                Socket.emit('status', {'msg': "Saved", 'delay': 3000});
+                Socket.emit('doUpdate', {});
+                //Delete the local file
+                fs.unlink(nfile, function(){
+                  console.log('Local file deleted!');
+                });
+                
               }
             });
             req.end(buf);
