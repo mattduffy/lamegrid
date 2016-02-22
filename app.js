@@ -25,10 +25,10 @@ var knoxClient = knox.createClient({
   bucket: config.s3Bucket
 });
 
-require('./routes/routes.js')(express, app, formidable, fs, os, gm, knoxClient, mongoose);
-
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+
+require('./routes/routes.js')(express, app, formidable, fs, os, gm, knoxClient, mongoose, io);
 
 server.listen(app.get('port'), function(){
   console.log('Photogird running on port %d', app.get('port'));

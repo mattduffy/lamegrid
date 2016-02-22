@@ -1,13 +1,16 @@
-module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mongoose) {
+module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mongoose, io) {
+  var Socket;
+  io.on('connection', function(socket){
+    Socket = socket;
+  });
+
   var singleImage = mongoose.Schema({
     filename:String,
     votes:Number
   });
   var singleImageModel = mongoose.model('singleImage', singleImage);
 
-
   var router = express.Router();
-
   router.get('/', function(req, res, next){
     res.render('index', {host: app.get('host')});
   });
@@ -39,7 +42,8 @@ module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mong
     newForm.on('end', function(){
       fs.rename(tmpFile, nfile, function(){
         // Resize the image.
-        gm(nfile).resize(300).write(nfile, function(){
+        gm(nfile).resize(300).write(nfile, function(err){
+          if(err) console.log(err);
           fs.readFile(nfile, function(err, buf){
             var req = knoxClient.put(fname, {
               'Content-Length': buf.length,
@@ -51,14 +55,34 @@ module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mong
                 var newImage = singleImageModel({
                   filename: fname,
                   votes: 0
-                }).save();
-                
+                });
+                //console.log(newImage._id);
+                newImage.save();
+                Socket.emit('status', {'msg': 'Saved!!', 'delay': 3000});
+                Socket.emit('doUpdate', {'id': newImage._id});
+                fs.unlink('nfile', function(){
+                  console.log('Local file deleted.');
+                });
               }
             });
             req.end(buf);
           });
         });
       });
+    });
+  });
+  router.get('/getimages', function(req, res, next){
+    var qs = req.query;
+    //var qs = {'query': {'id': false}};
+    console.log(req.query);
+    if(qs.id){
+      //only get the most recent image
+      var selector = {'_id': qs.id};
+    } else if(qs.full) {
+      var selector = {};
+    }
+    singleImageModel.find(selector, function(err, result){
+      res.send(JSON.stringify(result));
     });
   });
   app.use('/', router);

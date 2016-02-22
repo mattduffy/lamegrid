@@ -5,13 +5,50 @@
 	<title>PhotoGrid</title>
 	<link rel="stylesheet" href="/css/main.css">
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
 	<script src="/js/photogrid_utils.js"></script>
 	<script>
 		$(function(){
 			var host = '{{host}}';
 
+			function renderList(fullList, id){
+				var qs;
+				qs = (fullList? '?full': (id!==''? '?id='+id: ''));
+				ajax({
+					url: host+'/getimages' + qs,
+					success: function(data){
+						var imagelist = JSON.parse(data.response);
+						for(var i=0; i<imagelist.length; i++){
+							var str = '				<li>';
+									str += '			<div class="overlay">';
+									str += '			<div class="voteCtrl">';
+									str += '				<a href="#" class="voteUp">';
+									str += '					<img data-photoid="' + imagelist[i]._id +'" src="/images/voteup.png" alt="Click Here to Vote Up !">';
+									str += '					<h4>' + imagelist[i].votes +'</h4>';
+									str += '				</a>';
+									str += '			</div>';
+									str += '			</div>';
+									str += '			<div class="imageHolder">';
+									str += '				<img src="https://s3-us-west-1.amazonaws.com/fapgrid/'+ imagelist[i].filename +'" alt="">';
+									str += '			</div>';
+									str += '		</li>';
+									$('.gallery ul').append(str);
+						}
+					}
+				})
+			}
+			renderList(true);
 			$(document).on('click', '#doUpload', function(){
 				uploadNow();
+			});
+
+			var socket = io(host);
+			socket.on('status', function(data){
+				showStatus(data.msg, data.delay);
+			});
+			socket.on('doUpdate', function(data){
+				//console.log('doUpdate data: ', data);
+				renderList(false, data.id);
 			});
 
 			function uploadNow(){
@@ -60,7 +97,7 @@
 		</div>
 		<div class="gallery">
 			<ul>
-				<!-- Repeat the following <li> structure for every image -->
+				<!-- Repeat the following <li> structure for every image-->
 				<li>
 					<div class="overlay">
 					<div class="voteCtrl">
