@@ -5,7 +5,7 @@
 	<title>PhotoGrid</title>
 	<link rel="stylesheet" href="/css/main.css">
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
+	<script src="/socket.io/socket.io.js" charset="utf-8"></script>
 	<script src="/js/photogrid_utils.js"></script>
 	<script>
 		$(function(){
@@ -47,9 +47,14 @@
 				showStatus(data.msg, data.delay);
 			});
 			socket.on('doUpdate', function(data){
+<<<<<<< HEAD
 				//console.log('doUpdate data: ', data);
 				renderList(false, data.id);
 			});
+=======
+				renderList();
+			})
+>>>>>>> a9f8d28faebf3d64eff9d5ae0822792fbe99e8f0
 
 			function uploadNow(){
 				$('.progress').fadeIn(100);
