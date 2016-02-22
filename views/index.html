@@ -22,8 +22,8 @@
 							var str = '				<li>';
 									str += '			<div class="overlay">';
 									str += '			<div class="voteCtrl">';
-									str += '				<a href="#" class="voteUp">';
-									str += '					<img data-photoid="' + imagelist[i]._id +'" src="/images/voteup.png" alt="Click Here to Vote Up !">';
+									str += '				<a href="#" data-photoid="' + imagelist[i]._id +'" class="voteUp">';
+									str += '					<img src="/images/voteup.png" alt="Click Here to Vote Up !">';
 									str += '					<h4>' + imagelist[i].votes +'</h4>';
 									str += '				</a>';
 									str += '			</div>';
@@ -42,19 +42,28 @@
 				uploadNow();
 			});
 
+			$(document).on('click', '.voteUp', function(e){
+				var that = $(this);
+				ajax({
+					url: host + '/voteup/' + that.data('photoid'),
+					success: function(data){
+						var parseData = JSON.parse(data.response);
+						console.log(parseData.votes);
+						that.find('h4').html(parseData.votes);
+					}
+				});
+				console.log('/voteup/'+that.data('photoid'));
+
+			});
+
 			var socket = io(host);
 			socket.on('status', function(data){
 				showStatus(data.msg, data.delay);
 			});
 			socket.on('doUpdate', function(data){
-<<<<<<< HEAD
 				//console.log('doUpdate data: ', data);
 				renderList(false, data.id);
 			});
-=======
-				renderList();
-			})
->>>>>>> a9f8d28faebf3d64eff9d5ae0822792fbe99e8f0
 
 			function uploadNow(){
 				$('.progress').fadeIn(100);
@@ -102,7 +111,7 @@
 		</div>
 		<div class="gallery">
 			<ul>
-				<!-- Repeat the following <li> structure for every image-->
+				<!-- Repeat the following <li> structure for every image
 				<li>
 					<div class="overlay">
 					<div class="voteCtrl">
@@ -116,7 +125,7 @@
 						<img src="../images/someimage.jpg" alt="">
 					</div>
 				</li>
-				<!-- End Repeat -->
+				 End Repeat -->
 
 
 			</ul>

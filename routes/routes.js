@@ -73,17 +73,22 @@ module.exports = function(express, app, formidable, fs, os, gm, knoxClient, mong
   });
   router.get('/getimages', function(req, res, next){
     var qs = req.query;
-    //var qs = {'query': {'id': false}};
-    console.log(req.query);
     if(qs.id){
       //only get the most recent image
       var selector = {'_id': qs.id};
     } else if(qs.full) {
       var selector = {};
     }
-    singleImageModel.find(selector, function(err, result){
+    singleImageModel.find(selector, null, {sort: {votes: -1}}, function(err, result){
       res.send(JSON.stringify(result));
     });
+  });
+  router.get('/voteup/:id', function(req, res, next){
+    singleImageModel.findByIdAndUpdate(req.params.id, {$inc: {'votes': 1}}, {new: true}, function(err, result){
+      if(err) console.log(err);
+      console.log("id %s, votes %d", req.params.id, result.votes);
+      res.send(200, {votes: result.votes})
+    })
   });
   app.use('/', router);
 }
